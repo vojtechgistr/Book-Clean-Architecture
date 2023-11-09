@@ -10,6 +10,9 @@ My notes from the book *Clean Architecture: A Craftsman's Guide to Software Stru
 5. [Object Orient Programming](#object-oriented-programming)
 6. [Functional programming](#functional-programming)
 
+III. [Design Principles](#design-principles)
+
+7. [SRP: The Single Responsibility Principle](#srp)
 ---
 
 # <a name="what-is-design-architecture">1. What is Design and Architecture</a>
@@ -54,3 +57,31 @@ My notes from the book *Clean Architecture: A Craftsman's Guide to Software Stru
 - To architects: OOP is the ability, through the use of polymorphism, to gain absolute control over every source code dependency in the system. It allows the architect to create a plugin architecture, in which modules that contain high-level policies are independent of modules that contain low-level details. The low-level details are relegated to plugin modules that can be deployed and developed independently from the modules that contain high-level policies.
  
 # <a name="functional-programming">6. Functional programming</a> 
+
+- Variables in functional languages do not vary - are not modified.
+- It is important to consider immutable variables, because **all race conditions, deadlock conditions, and concurrent update problems are due to mutable variables**.
+- You cannot have a race condition or a concurrent update problem if no variable is ever updated. You cannot have deadlocks without mutable locks.
+- As an architect, you must be asking yourself whether immutability is practicable.
+
+## Segregation of Mutability
+- One of the most common compromises in regard to immutability is to **segregate the application** into mutable and immutable components
+- Immutable components perform their tasks in a functional way, without using any mutable variables
+
+## Event Sourcing
+- Imagine if we added up all the transactions of a bank client, we'd require a lot of processing power.
+- However we could use event sourcing and have enough storage to perform that.
+- the **event sourcing** stategy here is we store the transactions, but not the state. When state is required, we simply apply all the transactions from the beginning of time.
+- We could therefore not update or delete anything, and thus making our application immutable, therefore *functional*
+- Event Sourcing ensures that all changes to application state are stored as a sequence of events.
+
+# <a name="design-principles">III. Design Principles (SOLID)</a> 
+
+- The SOLID principles tell us how to arrange our functions and data structures into classes, and how those classes should be interconnected.
+- The goal of the principles is creation of mid-level software structures that:
+  * 1. Tolerate change
+  * 2. Are Easy to understand
+  * 3. Are the basis of components taht can be used in many software systems
+- The "mid-level" refers to the fact that these princilpes are applied by programmers working at the modile level. They help to define the kinds of software structures used within modules and components.
+  
+- Executive summary of principles:
+
