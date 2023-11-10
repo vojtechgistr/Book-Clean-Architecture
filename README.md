@@ -12,7 +12,10 @@ My notes from the book *Clean Architecture: A Craftsman's Guide to Software Stru
 
 III. [Design Principles](#design-principles)
 
-7. [SRP: The Single Responsibility Principle](#srp)
+7. [SRP: The Single Responsibility Principle](#single-responsibility-principle)
+8. [OCP: The Open Closed Principle](#open-closed-principle)
+9. [LSP: The Liskov Substitution Principle](#liskov-substitution-principle)
+
 ---
 
 # <a name="what-is-design-architecture">1. What is Design and Architecture</a>
@@ -82,6 +85,81 @@ III. [Design Principles](#design-principles)
   * 2. Are Easy to understand
   * 3. Are the basis of components taht can be used in many software systems
 - The "mid-level" refers to the fact that these princilpes are applied by programmers working at the modile level. They help to define the kinds of software structures used within modules and components.
-  
-- Executive summary of principles:
 
+
+# <a name="single-responsibility-principle">7. SRP: The Single Responsibility Principle</a>
+
+# The Single Responsibility Principle (SRP)
+- It's wrong to assume that SRP means that every module should do just one thing. There is a principle like that, a function should do one thing.
+- Software systems are changed to satisfy users and stakeholders - **those users and stakeholders are the “reason to change”**
+- However, since users/skateholders change, we'll refer to them as actors. Thus, the **definition** of The Single Responsibility Principle (SRP) is: 
+  * **A module should be responsible to one, and only one, actor**
+- Module is basically just a source file or a cohesive set of functions and data structures.
+
+## Violations of SRP
+### Symptom 1: Accidental Duplication
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/485bc647-9a39-4a06-91de-52fca22ee881)
+
+- An `Employee` class has three functions `calculatePay()`, `reportHours()`, and `save()`.
+- This class violates SRP because those three methods are responsible for very different actors.
+  - The `calculatePay()` method is specified by the accounting department, which reports to the CFO
+	- The `reportHours()` method is specified and used by human resources department, which reports to the COO
+	- The `save()` method is specified by the database administrators (DBAs), who report to the CT
+- Having them coupled like this can cause issues, for example, if `reportHours()` and `calculatePay()` use a method like `regularHours()` for their calculations and CFO requests a change in `regularHours()`, it would affect the COO too and the company could lose a millions of dollars if tested poorly after the change.
+
+### Symptom 2: Merges
+- Two different developers, possibly from two different teams, check out the Employee class and begin to make changes. Unfortunately their changes collide. The result is a
+merge and that is a risky affair.
+- One solution is to **seperate code that supports different actors**.
+
+### Solutions
+- One way to solve the above `Employee` class is to seperate data from functions.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/b995830e-bfce-4175-9f40-85ab6251be4d)
+
+- However, the downside of this is developers now have 3 classes they have to instantiate and track. A common solution here is to use the Facade pattern.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/db22acdc-3bae-48d7-91c0-9b0e825b9397)
+
+- The `EmployeeFacade` contains very little code, so the solution is to keep the most important method in the original `Employee` class and then using that class as a Facade for the lesser functions.
+
+# <a name="open-closed-principle">8. OCP: The Open-Closed Principle</a>
+
+- Definition: *A software artifact should be open for extension but closed for modification*.
+- In other words, the behavior of a software artifact ought to be extendible, without having to modify that artifact.
+- Most students of software design recognize the OCP as a principle that guides them in the design of classes and modules.
+
+## Example: Financial Summary System
+- We have a website that: displays financial summary, is scrollable, displays negative numbers in red color.
+- A request was made to turn the same summary into a report to be printed on a black-and-white printer.
+- A good software architecture here would reduce the amount of changed code by separating the things that change for different reasons (SRP), and then organizing the dependencies between those things properly (DIP)
+
+### SRP Approach
+- By applying SRP, we might come up with the data-flow:
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/a8b7c991-4725-4898-a67e-0e0d829b8701)
+
+- The essential insight here is that generating the report involves 2 separate responsibilities:
+  - The calculation of the reported data
+  - The presentation of the data into a web and printer-friendly form
+
+ ![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/a0ea086a-074c-4470-9e5b-69ea6695f346)
+
+- We accomplish this by partitioning the processes into classes, and separating those
+classes into components, as shown by the double lines in the diagram
+- Classes marked with `<I>` are interfaces; those marked with `<DS>` are data structures. Open arrowheard are *using* relationships; closed arrowheads are *implements* or *inheritance* relationships.
+- `FinancialDataMapper` knows about `FinancialDataGateway` through an implements relationship, but `FinancialGateway` knows nothing at all about `FinancialDataMapper`.
+- Notice that each double line is crossed in one direction only. This means that all component relationships are unidirectional. These arrows point towards the components that we want to protect from change.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/4f4be0bc-0aec-4ec1-b19d-b78b1d2571a0)
+
+- So if component A should be protected from changes in component B, then **component B should depend on component A**.
+- We want to protect the *Controller* from changes in the *Presenters*. We want to protect the *Presenters* from changes in the *Views*. We want to protect the *Interactor* from changes in-—well, anything.
+- **Architects separate functionality based on how, why, and when it changes, and then organize that separated functionality into a hierarchy of components. Higher-level components in that hierarchy are protected from the changes made to lower-level components.**
+
+### Information Hiding
+- The `FinancialReportRequester` interface purpose is to protect the `FinancialReportController` from knowing too much about the `Interactor`.
+- If the interface were not there, the *Controller* would have transitive dependencies on the `FinancialEntities`.
+- Our first priority is to protect the *Interactor* from changes to the *Controller*, but we also want to protect the *Controller* from changes to the *Interactor* by hiding the internals of the *Interactor*.
+
+# <a name="liskov-substitution-principle">9. LSP: The Liskov Substitution Principle</a> 
