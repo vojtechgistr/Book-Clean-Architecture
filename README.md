@@ -320,3 +320,74 @@ systems, like large buildings, are built out of smaller components.
   - Create a new component that both `Entities` and `Authorizer` depend on. Move the class(es) that they both depend on into that new component.
 
 ![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/f1862c4f-bc0a-415a-9be2-5831d8f5a5cf)
+
+## Top-Down Design
+
+- The component structure cannot be designed from top down. It is not one of the first things about the system that is designed, but rather evolves as the system grows and changes.
+- Components has very little to do with the function of the application. Instead, they are a map to the *buildability* and *maintainability* of the application.
+- **That's why they are not designed at the beginning of the project. There is no software to build or maintain, so there is no need for a build and maintainance map.**
+- But as more and more modules accumulate in the early stages of implementation and design, there is a growing need to manage the dependencies so that the project can be developed without the "morning after syndrome".
+- Moreover, we want to keep changes as localized as possible, so we start paying attention to the SRP and CCP and collocate classes that are likely to change together.
+- **If we tried to design the component dependency structure before we designed any classes, we would likely fail rather badly. We would not know much about common closure, we would be unaware of any reusable elements, and we would almost certainly create components that produced dependency cycles. Thus the component dependency structure grows and evolves with the logical design of the system.**
+
+## SDP: The Stable Dependencies Principle
+
+- By conforming to the SDP, we ensure that modules that are intended to be easy to change are not dependend on by modules that are harder to change.
+
+### Stability
+
+- Stability is related to amount of work required to make a change - it is "not easily moved".
+- In software, many factors can make a component hard to change --for example, its size, complexity, and clarity, among other characteristics.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/e49eb0cc-fc46-4839-94c7-b4cabe3e5002)
+
+- `X` is a stable component. Three components depend on `X`, so it has three good reasons not to change. We say that `X` is responsible to those three components.
+- Conversely, `X` depends on nothing, so it has no external influence to make it change. We say it is independent.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/c06b24f6-f071-4548-957f-0ae77d6a62dc)
+
+- `Y` is a very unstable component. No other components depend on `Y`, so we say that it is irresponsible.
+- `Y` also has three components that it depends on, so changes may come from three external sources. We say that Y is dependent.
+
+### Stability Metrics
+
+- How can we measure the stability of a component? One way is to count the number of dependencies that enter and leave that component. These counts will allow us to calculate the positional stability of the component.
+  - *Fan-in*: Incoming dependencies. This metric identifies the number of classes outside this component that depend on classes within the component.
+  - *Fan-out*: Outgoing depenencies. This metric identifies the number of classes inside this component that depend on classes outside the component.
+  - *I*: Instability: `I = Fan-out / (Fan-in + Fan-out)`. This metric has the range `[0, 1]`. `I = 0` indicates a maximally stable component. `I = 1` indicates a maximally unstable component.
+- The SDP says that the *I* metric of a component should be larger than the *I* metrics of the comonents that it depends on = *I* metrics should *decrease* in the direction of dependency.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9c7d4a3b-c01e-49e8-8cb2-30ac4e488767)
+
+### Not all components should be stable
+
+- If all the components in a system were maximally stable, the system would be unchangeable.
+- However, we want to design our component structure so that some components are unstable and some are stable.
+- Putting the unstable components at the top of a diagram is a useful convention because any arrow that points *up* is violating the SDP (and we shall see later, the ADP).
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/ad0893d2-d61f-4576-a0b3-4872a51846c1)
+
+- The diagram below shows how the SDP can be violated.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/87a3429d-ca3b-4dec-9244-6534b766981c)
+
+- `Flexible` is a component that we have designed to be easy to change - we want it to be unstable.
+- However in component `Stable`, some developer has hung a dependency on `Flexible`. This violates SDP because the *I* metric for `Stable` is much smaller than the *I* metric for `Flexible` = `Flexible` is no longer easy to change because a change will force us to deal with `Stable` and all its dependents.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9de33918-54c8-48f5-bf12-6b9386d9207c)
+
+- We can fix this by employing the DIP.
+- This breaks the dependency of `Stable` on `Flexible` and forces both components to depend on `UServer`.
+- `Userver` is very stable (*I = 0*), and `Flexible` retains its necessary instability (*I = 1*). All dependencies now flow in the direction of decreasing *I*
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/5c91a6fb-cd09-40be-bc39-50f25273e02c)
+
+### Abstract Components
+
+- In statically typed languages, it is common, and necessary, to use components that use nothing but an interface.
+- These abstract components are very stable and, therefore, are ideal targets for less stable components to depend on.
+- In dynamically typed languages, these abstract components doesn't exist at all, nor the dependencies that would have targeted them. Dependency structures in these languages are much simpler because dependency inversion does not require either the declaration or the inheritance of interfaces.
+
+## SAP: The Stable Abstraction Principle
+
+- 
