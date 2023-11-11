@@ -14,7 +14,15 @@ III. [Design Principles](#design-principles)
 
 7. [SRP: The Single Responsibility Principle](#single-responsibility-principle)
 8. [OCP: The Open Closed Principle](#open-closed-principle)
-9. [LSP: The Liskov Substitution Principle](#liskov-substitution-principle)
+9. [LSP: The Liskov Substitution Principle](#liskov-substitution-principle))
+10. [ISP: The Interface Segregation Principle](#interface-segregation-principle)
+11. [DIP: The Dependency Inversion Principle](#dependency-inversion-principle)
+
+IV. [Component Principles](#component-principles)
+
+12. [Components](#components)
+13. [Component Cohesion](#component-cohesion)
+13. [Component Coupling](#component-coupling)
 
 ---
 
@@ -163,3 +171,152 @@ classes into components, as shown by the double lines in the diagram
 - Our first priority is to protect the *Interactor* from changes to the *Controller*, but we also want to protect the *Controller* from changes to the *Interactor* by hiding the internals of the *Interactor*.
 
 # <a name="liskov-substitution-principle">9. LSP: The Liskov Substitution Principle</a> 
+
+- *What is wanted here is something like the following substitution property: If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T*
+
+## Good Example:
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/a8b953ba-5171-47f7-93f3-a1aaaa56abb8)
+
+- This design conforms to the LSP because the behavior of the `Billing` application does not depend, in any way, on which of the two subtypes it uses.
+- Both of the subtypes are substitutable for the `License` type.
+
+## Bad Example:
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/03895447-5cdb-4a85-8bf9-52fea9a4cb3c)
+
+- In this example, Square is not a proper subtype of Rectangle because the height and width of the Rectangle are independently mutable.
+- In contrast, the height and width of the Square must change together.
+- Since the User believes it is communicating with a Rectangle, it could easily get confused.
+
+# <a name="interface-segregation-principle">10. ISP: The Interface Segregation Principle</a>
+
+- Depending on something that carries baggage that you don't need can cause you troubles that you didn't expect.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/4c9e4f96-2a5a-430c-8e4f-909db1691dec)
+
+- Imagine that `OPS` is a class written in a statically typed language like Java.
+- Clearly, in that case, the source code of `User1` will inadvertently depend on `op2` and `op3`, even though it doesn’t call them.
+- This dependence means that a change to the source code of `op2` in `OPS` will force `User1` to be recompiled and redeployed, even though nothing that it cared about has actually changed.
+- This problem can be resolved by segregating the operations into interfaces as shown below:
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/fddaaeb2-3f76-459f-a0c2-ce88c4fbcc3d)
+
+- The source code of User1 will depend on `U1Ops`, and `op1`, but will not depend on `OPS`.
+- Thus a change to `OPS` that `User1` does not care about will not cause `User1` to be recompiled and redeployed.
+
+# <a name="dependency-inversion-principle">11. DIP: The Dependency Inversion Principle</a>
+
+- The DIP tells us that the most flexible systems are those in which source code dependencies refer only to abstractions, not to concretions.
+- In a statically typed language, like Java, this means that the `use`, `import`, and `include` statements should refer only to source modules containing interfaces, abstract classes, or some other kind of abstract declaration. **Nothing concrete should be depended on.**
+- This only applies to *volatile* concrete elements of our system - for example in Java, we don't care about very stable classes like `String`.
+
+## Stable Abstractions
+
+- Interfaces are less volatile than implementations.
+- Coding practices:
+  - **Don’t refer to volatile concrete classes.** Refer to abstract interfaces instead. This rule applies in all languages, whether statically or dynamically typed. It also puts severe constraints on the creation of objects and generally enforces the use of *Abstract Factories*.
+  - **Don’t derive from volatile concrete classes.** This is a corollary to the previous rule, but it bears special mention. In statically typed languages, inheritance is the strongest, and most rigid, of all the source code relationships; consequently, it should be used with great care. In dynamically typed languages, inheritance is less of a problem, but it is still a dependency—and caution is always the wisest choice.
+  - **Don’t override concrete functions.** Concrete functions often require source code dependencies. When you override those functions, you do not eliminate those dependencies—indeed, you inherit them. To manage those dependencies, you should make the function abstract and create multiple implementations.
+  - **Never mention the name of anything concrete and volatile.** This is really just a restatement of the principle itself.
+
+## Factories
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9f57940e-42ba-452a-a86e-69d03e7c02ce)
+
+- The curved line is an architectural boundary. It separates the abstract from the concrete.
+- The `Application` uses the `ConcreteImpl` through the `Service` interface. However, the `Application` must somehow create instances of the `ConcreteImpl`. To achieve this without creating a source code dependency on the `ConcreteImpl`, the `Application` calls the `makeSvc` method of the `ServiceFactory` interface. This method is implemented by the `ServiceFactoryImpl` class, which derives from `ServiceFactory`. That implementation instantiates the `ConcreteImpl` and returns it as a `Service`.
+- The concrete component in Figure 11.1 contains a single dependency, so it violates the DIP. This is typical. DIP violations cannot be entirely removed, but they can be gathered into a small number of concrete components and kept separate from the rest of the system.
+
+
+# <a name="component-principles">IV. Component Principles</a>
+
+- If the SOLID principles tell us how to arrange the bricks into walls and rooms, then the
+component principles tell us how to arrange the rooms into buildings. Large software
+systems, like large buildings, are built out of smaller components.
+
+
+# <a name="components">12. Components</a>
+
+- Components are the units of deplyoment - the smallest entities that can be deployed as a part of a system.
+- For example in Java - .jar files, in Ruby - gem files, in .NET - DLLs.
+- They can be:
+  - Linked together into a single executable.
+  - Aggregated together into a single archive, such as a `.war` file.
+  - Independently deployed as separate dynamically loaded plugins, such as `.jar` / `.dll` / `.exe` files.
+- Regardless of how they are eventually deployed, well-designed components always retain the ability to be independently deployable and, therefore, independently developable.
+
+# <a name="component-cohesion">13. Component Cohesion</a>
+
+## REP: The Reuse/Release Equivalence Principle
+
+- Definition: *The granule of reuse is the granule of release*.
+- Only components that are released through a tracking system can be effectively reused.
+- It's common for developers to be alerted about a new release and decide, based on the changes made in that release, to continue to use the old release or not.
+- Components must be separately released, versioned, and tracked to ensure the reusability of the code.
+- Without release numbers, there would be no way to ensure that all the reused components are compatible with each other.
+
+## CCP: The Common Closure Principle
+
+- This is the Single Responsibility Principle (SRP) restated for components. Both can be defined as:
+  - *Gather together those things that change at the same times and for the same reasons. Separate those things that change at different times or for different reasons.*
+- Just as the SRP says that a class should not contain multiple reasons to change, so the Common Closure Principle (CCP) says that a component should not have multiple reasons to change.
+- The CCP prompts us to gather together in one place all the classes that are likely to change for the same reasons. This minimizes the workload related to releasing, revalidating, and redeploying the software.
+- This principle is closely related to Open Closed Principle (OCP).
+- Because 100% closure is not attainable, closure must be strategic. We design our classes such that they are closed to the most common kinds of changes that we expect or have experienced.
+
+## CRP: The Common Reuse Principle
+
+- Definition: *Don't force users of a component to depend on things they don't need*.
+- Is yet another principle that helps us to decide which classes and modules should be placed into a component.
+- When one component uses another, a dependency is created between the components and because of that dependency, every time the *used* component is changed, the *using* component will likely need corresponding changes.
+- **Thus when we depend on a component, we want to make sure we depend on every class in that component. Put another way, we want to make sure that the classes that we put into a component are inseparable --that it is impossible to depend on some and not on the others.**
+
+### Relation to ISP
+
+- The ISP advises us not to depend on classes that have methods we don't use. The CRP advises us not to depeend on components that have classes we don't use.
+
+## The Tension Diagram for Component Cohesion
+
+- Three cohesion principles tend to finght each other. The REP and CCP are *inclusive* - both tend to make components larger.
+- The CRP is an *exclusive* principle, driving components to be smaller.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/de819c24-d92d-44cf-97f8-5a4888b03bb2)
+
+- An architect who focuses on just the REP and CRP will find that too many components are impacted when simple changes are made. In contrast, an architect who focuses too strongly on the CCP and REP will cause too many unneeded releases to be generated.
+
+# <a name="component-coupling">14. Component Coupling</a>
+
+- The forces that impinge upon the architecture of a component structure are technical, political, and volatile.
+
+## ADP: The Acyclic Dependencies Principle
+
+- *Allow no cycles in the component dependency graph*
+- "morning after syndrome" = you come back to work in the morning but the code that worked yesterday doesn't work, because somebody stayed longer than you and made changes to it's dependencies.
+- The "morning after syndrome" occurs in development environments where many developers are modifying the same source files.
+- Solution to this is to partition the development environment into releasable components, which become units of work that can be responsibility of a single developer, or a team of developers.
+- By this, each team can decide for itself when to adapt its own components to new releases of the components.
+- To make it work successfully, **you must manage the dependency structure of components. There can be no cycles**
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/5138613c-b6cc-4a14-b90c-a0ef2d480ac6)
+
+- This structure has no cycles = it is directed acyclic graph (DAG).
+- We can find out who will be affected by changing a component, for example `Presenters`, you just follow dependency arrows backward. Thus `View` and `Main` will both be affected.
+
+### The Effect of a cycle component
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/528b6a49-8103-4817-a6bd-47025b7b38bd)
+
+- This cycle creates some immediate problems. For example, the developers working on the `Database` component know that to release it, the component must be compatible with `Entities`. However, with the cycle in place, the `Database` component must now also be compatible with `Authorizer`. But `Authorizer` depends on `Interactors`.
+- This makes `Database` much more difficult to release. `Entities`, `Authorizer`, and `Interactors` have, in effect, become one large component.
+
+### Breaking the cycle
+
+- There are two primary mechanisms for breaking a cycle:
+  - Apply the Dependency Inversion Principle (DIP). In the case in Figure 14.3, we could create an interface that has the methods that `User` needs. We could then put that interface into `Entities` and inherit it into `Authorizer`. This inverts the dependency between `Entities` and `Authorizer`, thereby breaking the cycle.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/334d620e-83e6-4572-b9bb-2ccc75c9b0ae)
+
+  - Create a new component that both `Entities` and `Authorizer` depend on. Move the class(es) that they both depend on into that new component.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/f1862c4f-bc0a-415a-9be2-5831d8f5a5cf)
