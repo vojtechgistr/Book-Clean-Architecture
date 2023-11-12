@@ -24,6 +24,7 @@ IV. [Component Principles](#component-principles)
 13. [Component Cohesion](#component-cohesion)
 14. [Component Coupling](#component-coupling)
 15. [What Is Architecture?](#what-is-architecture)
+16. [Independence](#independence)
 
 ---
 
@@ -135,7 +136,9 @@ merge and that is a risky affair.
 # <a name="open-closed-principle">8. OCP: The Open-Closed Principle</a>
 
 - Definition: *A software artifact should be open for extension but closed for modification*.
-- In other words, the behavior of a software artifact ought to be extendible, without having to modify that artifact.
+- In other words:
+  - the behavior of a software artifact ought to be extendible, without having to modify that artifact.
+  - = the behavior of software entities (classes, modules, functions, etc.) ought to be extendible, without modifying those entities.
 - Most students of software design recognize the OCP as a principle that guides them in the design of classes and modules.
 
 ## Example: Financial Summary System
@@ -173,7 +176,8 @@ classes into components, as shown by the double lines in the diagram
 
 # <a name="liskov-substitution-principle">9. LSP: The Liskov Substitution Principle</a> 
 
-- *What is wanted here is something like the following substitution property: If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T*
+- *What is wanted here is something like the following substitution property: If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T.*
+- A child class should be able to do everything that a parent class can.
 
 ## Good Example:
 
@@ -450,3 +454,7 @@ component is as far away as possible from the Main Sequence.
 - All software systems can be decomposed into two major elements: *policy* and *details*.
 - The policy element embodies all the business rules and procedures. The policy is where the true value of the system lives.
 - The details are those things that are necessary to enable humans, other systems, and programmers to communicate with the policy, but that do not impact the behavior of the policy at all. They include IO devices, databases, web systems, servers, frameworks, communication protocols, and so forth.
+
+# <a name="independence">16. Independence</a>
+
+
