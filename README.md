@@ -14,7 +14,7 @@ III. [Design Principles](#design-principles)
 
 7. [SRP: The Single Responsibility Principle](#single-responsibility-principle)
 8. [OCP: The Open Closed Principle](#open-closed-principle)
-9. [LSP: The Liskov Substitution Principle](#liskov-substitution-principle))
+9. [LSP: The Liskov Substitution Principle](#liskov-substitution-principle)
 10. [ISP: The Interface Segregation Principle](#interface-segregation-principle)
 11. [DIP: The Dependency Inversion Principle](#dependency-inversion-principle)
 
@@ -22,7 +22,8 @@ IV. [Component Principles](#component-principles)
 
 12. [Components](#components)
 13. [Component Cohesion](#component-cohesion)
-13. [Component Coupling](#component-coupling)
+14. [Component Coupling](#component-coupling)
+15. [What Is Architecture?](#what-is-architecture)
 
 ---
 
@@ -162,7 +163,7 @@ classes into components, as shown by the double lines in the diagram
 ![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/4f4be0bc-0aec-4ec1-b19d-b78b1d2571a0)
 
 - So if component A should be protected from changes in component B, then **component B should depend on component A**.
-- We want to protect the *Controller* from changes in the *Presenters*. We want to protect the *Presenters* from changes in the *Views*. We want to protect the *Interactor* from changes in-—well, anything.
+- We want to protect the *Controller* from changes in the *Presenters*. We want to protect the *Presenters* from changes in the *Views*. We want to protect the *Interactor* from changes in-well, anything.
 - **Architects separate functionality based on how, why, and when it changes, and then organize that separated functionality into a hierarchy of components. Higher-level components in that hierarchy are protected from the changes made to lower-level components.**
 
 ### Information Hiding
@@ -270,7 +271,7 @@ systems, like large buildings, are built out of smaller components.
 - Definition: *Don't force users of a component to depend on things they don't need*.
 - Is yet another principle that helps us to decide which classes and modules should be placed into a component.
 - When one component uses another, a dependency is created between the components and because of that dependency, every time the *used* component is changed, the *using* component will likely need corresponding changes.
-- **Thus when we depend on a component, we want to make sure we depend on every class in that component. Put another way, we want to make sure that the classes that we put into a component are inseparable --that it is impossible to depend on some and not on the others.**
+- **Thus when we depend on a component, we want to make sure we depend on every class in that component. Put another way, we want to make sure that the classes that we put into a component are inseparable—that it is impossible to depend on some and not on the others.**
 
 ### Relation to ISP
 
@@ -337,7 +338,7 @@ systems, like large buildings, are built out of smaller components.
 ### Stability
 
 - Stability is related to amount of work required to make a change - it is "not easily moved".
-- In software, many factors can make a component hard to change --for example, its size, complexity, and clarity, among other characteristics.
+- In software, many factors can make a component hard to change—for example, its size, complexity, and clarity, among other characteristics.
 
 ![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/e49eb0cc-fc46-4839-94c7-b4cabe3e5002)
 
@@ -390,4 +391,62 @@ systems, like large buildings, are built out of smaller components.
 
 ## SAP: The Stable Abstraction Principle
 
-- 
+- Definition: *A component should be abstract as it is stable.*
+- SAP sets up a relationship between stability and abstractness - it says:
+  - stable component should be abstract - easily extended
+  - unstable component should be concrete - easily changed
+- Thus *dependencies run in the direction of abstraction.*
+
+### Where do we put the high-level policy?
+
+- The software that encapsulates the high-level policies of the system should be placed into stable components (I = 0).
+- Unstable components (I = 1) should contain only the software that is volatile—software that we want to be able to quickly and easily change.
+- However, if the high-level policies are placed into stable components, then the source code that represents those policies will be difficult to change.
+- The answer is found in OCP. This principle tells us that it is possible and desirable to create classes that are flexible enough to be extended without requiring modification - Abstract Classes.
+
+### Measuring Abstraction
+
+- The *A* metric is a measure of the abstractness of a component.
+  - *Nc*: The number of classes in the component.
+  - *Na*: The number of abstract classes and interfaces in the component.
+  - *A*: Abstractness. `A = Na ÷ Nc`.
+- *A* metric ranges from 0 (no abstract classes at all) to 1 (contains nothing but abstract classes).
+
+### The Main Sequence
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/62227b97-19c9-4563-b75e-dcfe6db33bfc)
+
+- Since we cannot enforce a rule that all components sit at either (0, 1) or (1, 0), we must assume that there is a locus of points on the *A/I* graph that defines reasonable positions for components.
+- A component that sits on the Main Sequence is not “too abstract” for its stability, nor is it “too unstable” for its abstractness. It is neither useless nor particularly painful. It is depended on to the extent that it is abstract, and it depends on others to the extent that it is concrete.
+- Good architects strive to position the majority of their components at one of the two endpoints of the Main
+Sequence.
+- However, in my experience, some small fraction of the components in a large system are neither perfectly abstract nor perfectly stable. Those components have the best characteristics if they are on, or close, to the Main Sequence.
+
+### Distance from the Main Sequence
+
+- *D*: Distance. `D = |A+I–1|`. The range of this metric is `[0, 1]`. A value of `0` indicates
+that the component is directly on the Main Sequence. A value of `1` indicates that the
+component is as far away as possible from the Main Sequence.
+- Any component that has a *D* value that is **not near zero** can be reexamined and restructured.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/4fdb0304-518a-4926-8f05-a71823f9874f)
+
+- We see that the bulk of the components lie along the Main Sequence, but some of them are more than one standard deviation (Z = 1) away from the mean. These aberrant components are worth examining more closely. For some reason, they are either very abstract with few dependents or very concrete with many dependents.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/b06a131d-10c9-43cf-81f0-af898a256946)
+
+- Another way to use the metrics is to plot the D metric of each component over time.
+
+# <a name="what-is-architecture">15. What Is Architecture?</a>
+
+- Software architects may not write as much code as other programmers do, but they continue to engage in programming tasks.
+- The architecture of a software system is the shape given to that system by those who build it. The form of that shape is in the division of that system into components, the arrangement of those components, and the ways in which those components communicate with each other.
+- The purpose of that shape is to facilitate the development, deployment, operation, and maintenance of the software system contained within it.
+- Good architecture makes the system easy to understand, easy to develop, easy to maintain, and easy to deploy.
+- The ultimate goal is to minimize the lifetime cost of the system and to maximize programmer productivity.
+
+## Keeping Options Open
+
+- All software systems can be decomposed into two major elements: *policy* and *details*.
+- The policy element embodies all the business rules and procedures. The policy is where the true value of the system lives.
+- The details are those things that are necessary to enable humans, other systems, and programmers to communicate with the policy, but that do not impact the behavior of the policy at all. They include IO devices, databases, web systems, servers, frameworks, communication protocols, and so forth.
