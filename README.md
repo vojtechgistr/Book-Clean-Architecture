@@ -25,6 +25,7 @@ IV. [Component Principles](#component-principles)
 14. [Component Coupling](#component-coupling)
 15. [What Is Architecture?](#what-is-architecture)
 16. [Independence](#independence)
+17. [Boundaries: Drawing Lines](#boundaries-drawing-lines)
 
 ---
 
@@ -457,4 +458,73 @@ component is as far away as possible from the Main Sequence.
 
 # <a name="independence">16. Independence</a>
 
+- The decoupling of the use cases and layers also affords a high degree of flexibility in deployment. Indeed, if the decoupling is done well, then it should be possible to hotswap layers and use cases in running systems. Adding a new use case could be a simple as adding a few new jar files or services to the system while leaving the rest alone.
+
+## Use Cases
+
+- Means that the architecture of the system must support the intent of the system. If the system is a shopping cart application, then the architecture must support shopping cart use cases. Indeed, this is the first concern of the architect, and the first priority of the architecture.
+- However, architecture does not wield much influence over the behavior of the system. There are very few behavioral options that the architecture can leave open. But influence isn’t everything.
+- **The most important thing a good architecture can do to support behavior is to clarify and expose that behavior so that the intent of the system is visible at the architectural level.**
+
+## Duplication
+
+- Architects often fall into a trap—a trap that hinges on their fear of duplication.
+- There is true duplication, in which every change to one instance necessitates the same change to every duplicate of that instance.
+- Then there is false or accidental duplication. If two apparently duplicated sections of code evolve along different paths—if they change at different rates, and for different reasons—then they are not true duplicates. Return to them in a few years, and you’ll find that they are very different from each other.
+
+## Decoupling modes
+
+  - **Source level**. We can control the dependencies between source code modules so that changes to one module do not force changes or recompilation of others (e.g., Ruby Gems). In this decoupling mode the components all execute in the same address space, and communicate with each other using simple function calls. There is a single executable loaded into computer memory. People often call this a monolithic structure.
+  - **Deployment level**. We can control the dependencies between deployable units such as jar files, DLLs, or shared libraries, so that changes to the source code in one module do not force others to be rebuilt and redeployed. Many of the components may still live in the same address space, and communicate through function calls. Other components may live in other processes in the same processor, and communicate through interprocess communications, sockets, or shared memory. The important thing here is that the decoupled components are partitioned into independently deployable units such as jar files, Gem files, or DLLs.
+  - **Service level**. We can reduce the dependencies down to the level of data structures, and communicate solely through network packets such that every execution unit is entirely independent of source and binary changes to others (e.g., services or microservices).
+
+- As the project matures, the optimal mode may change.
+
+
+# <a name="boundaries-drawing-lines">17. Boundaries: Drawing Lines</a>
+
+- Which kinds of decisions are premature? Decisions that have nothing to do with the business requirements—the use cases—of the system.
+- These include decisions about frameworks, databases, web servers, utility libraries, dependency injection, and the like.
+- A good system architecture:
+  - Is one in which decisions like these are rendered ancillary and deferrable.
+  - A good system architecture does not depend on those decisions.
+  - A good system architecture allows those decisions to be made at the latest possible moment, without significant impact.
+- To draw boundary lines in a software architecture, you first partition the system into components. Some of those components are core business rules; others are plugins that contain necessary functions that are not directly related to the core business. Then you arrange the code in those components such that the arrows between them point in one direction—toward the core business.
+- You should recognize this as an application of the Dependency Inversion Principle and the Stable Abstractions Principle. Dependency arrows are arranged to point from lower-level details to higher-level abstractions.
+
+## Which lines do you draw, and when do you draw them?
+
+- You draw lines between things that matter and things that don’t.
+- The GUI doesn’t matter to the business rules, so there should be a line between them. The database doesn’t
+matter to the GUI, so there should be a line between them. The database doesn’t matter to the business rules, so there should be a line between them
+- Where is the boundary line? The boundary is drawn across the inheritance relationship, just below the `DatabaseInterface`.
+- **Boundaries are drawn where there is an axis of change. The components on one side of the boundary change at different rates, and for different reasons, than the components on the other side of the boundary.**
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9b143f89-ec53-44b3-9a5d-748eae6e4b93)
+
+- The `BusinessRules` use the `DatabaseInterface` to load and save data. The `DatabaseAccess` implements the
+interface and directs the operation of the actual `Database`.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/564e5f91-1ca4-4b5b-b44a-e1c3df4d35ca)
+
+- Note the two arrows leaving the `DatabaseAccess` class. Those two arrows point away from the `DatabaseAccess` class. That means that none of these classes knows that the `DatabaseAccess` class exists.
+- Now because of this, we can use any database we want without affecting the business rules.
+
+## What about input and output?
+
+- The IO is irrelevant.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/d7ec8773-adcb-4435-a63c-850f05e9cd1b)
+
+- Once again, we see that the less relevant component depends on the more relevant component. The arrows show which component knows about the other and, therefore, which component cares about the other. The `GUI` cares about the `BusinessRules`.
+- Having drawn this boundary and this arrow, we can now see that the `GUI` could be replaced with any other kind of interface—and the `BusinessRules` would not care.
+
+## Plugin Architecture
+
+- Indeed, the history of software development technology is the story of how to conveniently create plugins to establish a scalable and maintainable system architecture.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/0c6e6878-434a-4922-964b-1a8a053c763f)
+
+- Because the user interface in this design is considered to be a plugin, we have made it possible to plug in many different kinds of user interfaces.
+- They could be web based, client/server based, SOA based, Console based, or based on any other kind of user interface technology.
 
