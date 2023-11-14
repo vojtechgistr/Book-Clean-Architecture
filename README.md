@@ -1,4 +1,4 @@
-![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9da5ddbb-91e9-40fd-842f-4537e7ad6bd2)# Clean Architecture
+# Clean Architecture
 My notes from the book *Clean Architecture: A Craftsman's Guide to Software Structure and Design* - by *Robert C. Martin*
 
 # Index
