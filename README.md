@@ -1,4 +1,4 @@
-# Clean Architecture
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9da5ddbb-91e9-40fd-842f-4537e7ad6bd2)# Clean Architecture
 My notes from the book *Clean Architecture: A Craftsman's Guide to Software Structure and Design* - by *Robert C. Martin*
 
 # Index
@@ -26,6 +26,8 @@ IV. [Component Principles](#component-principles)
 15. [What Is Architecture?](#what-is-architecture)
 16. [Independence](#independence)
 17. [Boundaries: Drawing Lines](#boundaries-drawing-lines)
+18. [Boundary Anatomy](#boundary-anatomy)
+19. [19. Policy and Level](#policy-and-level)
 
 ---
 
@@ -528,3 +530,62 @@ interface and directs the operation of the actual `Database`.
 - Because the user interface in this design is considered to be a plugin, we have made it possible to plug in many different kinds of user interfaces.
 - They could be web based, client/server based, SOA based, Console based, or based on any other kind of user interface technology.
 
+# <a name="boundary-anatomy">18. Boundary Anatomy</a>
+
+- The architecture of a system is defined by a set of software components and the boundaries that separate them. Those boundaries come in many different forms.
+- Most systems, other than monoliths, use more than one boundary strategy.
+
+## Boundary Crossing
+
+- At runtime, a boundary crossing is nothing more than a function on one side of the boundary calling a function on the other side and passing along some data.
+- The trick to creating an appropriate boundary crossing is to manage the source code dependencies.
+- Managing and building firewalls against this change is what boundaries are all about.
+
+## the Dreaded Monolith
+
+- The simplest and most common of the architectural boundaries has no strict physical representation. It is simply a disciplined segregation of functions and data within a single processor and a single address space.
+- The simplest possible boundary crossing is a function call from a low-level client to a higher-level service. Both the runtime dependency and the compile-time dependency point in the same direction, toward the higher-level component.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/4b25df6a-470a-4bbe-b516-04107ced6f74)
+
+- When a high-level client needs to invoke a lower-level service, dynamic polymorphism is used to invert the dependency against the flow of control. The runtime dependency opposes the compile-time dependency.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/aeaf8db5-cee6-44cf-82c2-fcbd01e5de6e)
+
+- Note, however, that all dependencies cross the boundary from right to left toward the higher-level component. Note, also, that the definition of the data structure is on the calling side of the boundary.
+- Communications between components in a monolith are very fast and inexpensive. They are typically just function calls. Consequently, communications across source-level decoupled boundaries can be very chatty.
+
+## Deployment Components
+
+- Deployment does not involve compilation. Instead, the components are delivered in binary, or some equivalent deployable form.
+- This is the deployment-level decoupling mode
+- The act of deployment is simply the gathering of these deployable units together in some convenient form, such as a WAR file, or even just a directory.
+- With that one exception, deployment-level components are the same as monoliths.
+- Communications across these boundaries can still be very chatty.
+
+## Threads
+
+- Both monoliths and deployment components can make use of threads.
+- Threads are not architectural boundaries or units of deployment, but rather a way to organize the schedule and order of execution.
+- They may be wholly contained within a component, or spread across many components.
+
+## Local Processes
+
+- A much stronger physical architectural boundary is the local process.
+- A local process is typically created from the command line or an equivalent system call. Local processes run in the same processor, or in the same set of processors within a multicore, but run in separate address spaces.
+- Memory protection generally prevents such processes from sharing memory, although shared memory partitions are often used.
+- Most often, local processes communicate with each other using sockets, or some other kind of operating system communications facility such as mailboxes or message queues
+- Each local process may be a statically linked monolith, or it may be composed of dynamically linked deployment components.
+- The source code of the higher-level processes must not contain the names, or physical addresses, or registry lookup keys of lower-level processes.
+- Communication across local process boundaries involve operating system calls, data marshaling and decoding, and interprocess context switches, which are moderately expensive. Chattiness should be carefully limited.
+
+## Services
+
+- The strongest boundary is a service.
+- A service is a process, generally started from the command line or through an equivalent system call.
+- Services do not depend on their physical location.
+- Two communicating services may, or may not, operate in the same physical processor or multicore.
+- The services assume that all communications take place over the network.
+- Care must be taken to avoid chatting where possible. Communications at this level must deal with high levels of latency.
+
+# <a name="policy-and-level">19. Policy and Level</a>
