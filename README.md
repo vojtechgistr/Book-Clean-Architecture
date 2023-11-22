@@ -28,6 +28,9 @@ IV. [Component Principles](#component-principles)
 17. [Boundaries: Drawing Lines](#boundaries-drawing-lines)
 18. [Boundary Anatomy](#boundary-anatomy)
 19. [19. Policy and Level](#policy-and-level)
+20. [20. Business Rules](#business-rules)
+21. [21. Screaming Architecture](#screaming-architecture)
+22. [22. The Clean Architecture](#the-clean-architecture)
 
 ---
 
@@ -589,3 +592,70 @@ interface and directs the operation of the actual `Database`.
 - Care must be taken to avoid chatting where possible. Communications at this level must deal with high levels of latency.
 
 # <a name="policy-and-level">19. Policy and Level</a>
+
+- Software systems are statements of policy. A computer program is a detailed description of the policy by which inputs are transformed into outputs.
+- In most nontrivial systems, that policy can be broken down into many different smaller statements of policy. Some of those statements will describe how particular business rules are to be calculated. Others will describe how certain reports are to be formatted. Still others will describe how input data are to be validated.
+
+## Level
+
+- A strict definition of “level” is “the distance from the inputs and outputs.”
+- The farther a policy is from both the inputs and the outputs of the system, the higher its level. The policies that manage input and output are the lowest-level policies in the system.
+- Lower-level components should be plugins to the higher-level components.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/dbd8d411-e811-436c-a66b-16ffeb3e950c)
+
+
+# <a name="business-rules">20. Business Rules</a>
+
+- The business rules should remain pristine, unsullied by baser concerns such as the user interface or database used.
+- Ideally, the code that represents the business rules should be the heart of the system, with lesser concerns being plugged in to them.
+- The business rules should be the most independent and reusable code in the system.
+- Strictly speaking, business rules are rules or procedures that make or save the business money. Very strictly speaking, these rules would make or save the business money, irrespective of whether they were implemented on a computer. They would make or save money even if they were executed manually.
+- Critical Business Rules usually require some data to work with.
+- For example, our loan requires a loan balance, an interest rate, and a payment schedule. We shall call this data Critical Business Data. This is the data that would exist even if the system were not automated.
+- The critical rules and critical data are inextricably bound, so they are a good candidate for an object. We’ll call this kind of object an **Entity**.
+
+## Entities
+
+- An Entity is an object within our computer system that embodies a small set of critical business rules operating on Critical Business Data.
+- The Entity object either contains the Critical Business Data or has very easy access to that data.
+- The interface of the Entity consists of the functions that implement the Critical Business Rules that operate on that data.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/55130287-cd56-4250-aac1-412caa37b820)
+
+- This class stands alone as a representative of the business.
+- It is unsullied with concerns about databases, user interfaces, or third-party frameworks.
+- It could serve the business in any system, irrespective of how that system was presented, or how the data was stored, or how the computers in that system were arranged.
+- **The Entity is pure business and nothing else.**
+
+## Use Cases
+
+- A use case is an object. It has one or more functions that implement the application-specific business rules. It also has data elements that include the input data, the output
+data, and the references to the appropriate Entities with which it interacts.
+- Entities have no knowledge of the use cases that control them.
+- Why are Entities high level and use cases lower level? Because use cases are specific to a single application and, therefore, are closer to the inputs and outputs of that system.
+
+## Request and Response Models
+
+- Well-formed use case object should have no inkling about the way that data is communicated to the user, or to any other component. We certainly don’t want the code within the use case class to know about HTMLor SQL!
+- The use case class accepts simple request data structures for its input, and returns simple response data structures as its output.
+- These data structures are not dependent on anything. They do not derive from standard framework interfaces such as `HttpRequest` and `HttpResponse`. They know nothing of the web, nor do they share any of the trappings of whatever user interface might be in place.
+- This lack of dependencies is critical.
+
+# <a name="screaming-architecture">21. Screaming Architecture</a>
+
+- If you look at the system architecture plans, you should see what it *screams*. It's like a plan of a house, when you look at it, it screams (you understand) "LIBRARY", or "HOME".
+- Architectures are not (or should not be) about frameworks. Architectures should not be supplied by frameworks.
+- Frameworks are tools to be used, not architectures to be conformed to.
+- If your architecture is based on frameworks, then it cannot be based on your use cases.
+- Your system architecture should be as ignorant as possible about how it will be delivered. You should be able to deliver it as a console app, or a web app, or a thick client app, or even a web service app, without undue complication or change to the fundamental architecture.
+
+## Testability
+
+- If your system architecture is all about the use cases, and if you have kept your frameworks at arm’s length, then you should be able to unit-test all those use cases without any of the frameworks in place.
+- You shouldn’t need the web server running to run your tests.
+- You shouldn’t need the database connected to run your tests.
+- Your Entity objects should be plain old objects that have no dependencies on frameworks or databases or other complications.
+
+# <a name="the-clean-architecture">22. The Clean Architecture</a>
+
