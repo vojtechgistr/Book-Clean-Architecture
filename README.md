@@ -659,3 +659,50 @@ data, and the references to the appropriate Entities with which it interacts.
 
 # <a name="the-clean-architecture">22. The Clean Architecture</a>
 
+- Every clean architecture produces systems that have the following characteristics:
+  - **Independent of frameworks.** The architecture does not depend on the existence of some library of feature-laden software. This allows you to use such frameworks as tools, rather than forcing you to cram your system into their limited constraints.
+  - **Testable.** The business rules can be tested without the UI, database, web server, or any other external element.
+  - **Independent of the UI.** The UI can change easily, without changing the rest of the system. A web UI could be replaced with a console UI, for example, without changing the business rules.
+  - **Independent of the database.** You can swap out Oracle or SQLServer for Mongo, BigTable, CouchDB, or something else. Your business rules are not bound to the database.
+  -**Independent of any external agency.** In fact, your business rules don’t know anything at all about the interfaces to the outside world.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/86135e9c-fcb0-4b01-a93a-c4eebe2803ef)
+
+- Nothing in an inner circle can know anything at all about something in an outer circle. In particular, the name of something declared in an outer circle must not be mentioned by the code in an inner circle. That includes functions, classes, variables, or any other named software entity.
+- The circles in Figure 22.1 are intended to be schematic: You may find that you need more than just these four. There’s no rule that says you must always have just these four. However, the Dependency Rule always applies.
+- The outermost circle consists of low-level concrete details. As you move inward, the software grows more abstract and encapsulates higher-level policies.
+
+## Entities
+
+- Entities encapsulate enterprise-wide Critical Business Rules. An entity can be an object with methods, or it can be a set of data structures and functions.
+- If you don’t have an enterprise and are writing just a single application, then these entities are the business objects of the application. They encapsulate the most general and high-level rules.
+- They are the least likely to change when something external changes. No operational change to any particular application should affect the entity layer.
+
+## Use cases
+
+- The software in the use cases layer contains application-specific business rules.
+- These use cases orchestrate the flow of data to and from the entities, and direct those entities to use their Critical Business Rules to achieve the goals of the use case.
+- We do not expect changes in this layer to affect the entities. We also do not expect this layer to be affected by changes to externalities such as the database, the UI, or any of the common frameworks.
+- We do, however, expect that changes to the operation of the application will affect the use cases and, therefore, the software in this layer. If the details of a use case change, then some code in this layer will certainly be affected.
+
+## Interface Adapters
+
+- The software in the interface adapters layer is a set of adapters that convert data from the format most convenient for the use cases and entities, to the format most convenient for some external agency such as the database or the web.
+- Similarly, data is converted, in this layer, from the form most convenient for entities and use cases, to the form most convenient for whatever persistence framework is being used (i.e., the database).
+- No code inward of this circle should know anything at all about the database. If the database is a SQL database, then all SQL should be restricted to this layer.
+
+## Frameworks and Drivers
+
+- The frameworks and drivers layer is where all the details go. The web is a detail. The is a detail. We keep these things on the outside where they can do little harm.
+
+## Crossing Boundaries
+
+- For example, suppose the use case needs to call the presenter.
+- This call must not be direct because that would violate the Dependency Rule: No name in an outer circle can be mentioned by an inner circle.
+- So we have the use case call an interface (shown in Figure 22.1 as “use case output port”) in the inner circle, and have the presenter in the outer circle implement it.
+
+## Which data crosses the boundaries?
+
+- Typically the data that crosses the boundaries consists of simple data structures. You can use basic structs or simple data transfer objects if you like. Or the data can simply be arguments in function calls. Or you can pack it into a hashmap, or construct it into an object.
+- **The important thing is that isolated, simple data structures are passed across the boundaries.**
+- We don’t want to cheat and pass Entity objects or database rows. We don’t want the data structures to have any kind of dependency that violates the Dependency Rule.
