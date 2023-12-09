@@ -31,6 +31,8 @@ IV. [Component Principles](#component-principles)
 20. [20. Business Rules](#business-rules)
 21. [21. Screaming Architecture](#screaming-architecture)
 22. [22. The Clean Architecture](#the-clean-architecture)
+23. [23. Presenters and Humble Objects](#presenters-and-humble-objects)
+24. [24. Partial Boundaries](#partial-boundaries)
 
 ---
 
@@ -703,6 +705,27 @@ data, and the references to the appropriate Entities with which it interacts.
 
 ## Which data crosses the boundaries?
 
-- Typically the data that crosses the boundaries consists of simple data structures. You can use basic structs or simple data transfer objects if you like. Or the data can simply be arguments in function calls. Or you can pack it into a hashmap, or construct it into an object.
+- Typically the data that crosses the boundaries consists of simple data structures.
+- You can use basic structs or simple data transfer objects if you like. Or the data can simply be arguments in function calls. Or you can pack it into a hashmap, or construct it into an object.
 - **The important thing is that isolated, simple data structures are passed across the boundaries.**
-- We don’t want to cheat and pass Entity objects or database rows. We don’t want the data structures to have any kind of dependency that violates the Dependency Rule.
+- We don’t want to cheat and pass Entity objects or database rows.
+- We don’t want the data structures to have any kind of dependency that violates the Dependency Rule.
+
+![image](https://github.com/DaRealAdalbertBro/Book-Clean-Architecture/assets/56306485/9713cb6b-5cbf-4e1e-be06-139a7119f1ac)
+
+# <a name="presenters-and-humble-objects">23. Presenters and Humble Objects</a>
+
+## The Humble Object Pattern
+
+- Design pattern that was originally identified as a way to help unit testers to separate behaviors that are hard to test from behaviors that are easy to test.
+- The idea is very simple: *Split the behaviors into two modules or classes.*
+- One of those modules is humble; it contains all the hard-to-test behaviors stripped down to their barest essence. The other module contains all the testable behaviors that were stripped out of the humble object.
+- For exampl GUI is the Humble Object (View) - hard to test, but GUI behavior is easy to test (Presenter).
+- Using the *Humble Object pattern*, we can separate these two kinds of behaviors into two different classes **called the Presenter and the View**.
+- At each architectural boundary, we are likely to find the Humble Object pattern lurking somewhere nearby.
+
+# <a name="partial-boundaries">24. Partial Boundaries</a>
+
+- In many situations, a good architect might judge that the expense of such a boundary is too high—but might still want to hold a place for such a boundary in case it is needed later.
+- This kind of anticipatory design is often frowned upon by many in the Agile community as a violation of YAGNI: “You Aren’t Going to Need It.” Architects, however, sometimes look at the problem and think, “Yeah, but I might.” In that case, they may implement a partial boundary.
+- The full-fledged architectural boundary uses reciprocal boundary interfaces to maintain isolation in both directions.
