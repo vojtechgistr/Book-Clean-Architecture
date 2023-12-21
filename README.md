@@ -33,6 +33,8 @@ IV. [Component Principles](#component-principles)
 22. [22. The Clean Architecture](#the-clean-architecture)
 23. [23. Presenters and Humble Objects](#presenters-and-humble-objects)
 24. [24. Partial Boundaries](#partial-boundaries)
+25. [25. Layers and Boundaries](#layers-and-boundaries)
+26. [26. The Main Component](#the-main-component)
 
 ---
 
@@ -752,3 +754,25 @@ data, and the references to the appropriate Entities with which it interacts.
 - Note, however, that the Client has a transitive dependency on all those service classes.
 - In static languages, a change to the source code in one of the `Service` classes will force the `Client` to recompile.
 - Also, you can imagine how easy backchannels are to create with this structure.
+
+# <a name="layers-and-boundaries">25. Layers and Boundaries</a>
+
+![image](https://github.com/vojtechgistr/Book-Clean-Architecture/assets/56306485/479b4c24-8cdf-4e9b-bda9-3791e03de86a)
+
+![image](https://github.com/vojtechgistr/Book-Clean-Architecture/assets/56306485/1afdbbbd-977b-49fb-896a-45ce8ff6d7f8)
+
+- On the one hand, some very smart people have told us, over the years, that we should not anticipate the need for abstraction.
+- This is the philosophy of YAGNI: “You aren’t going to need it.” There is wisdom in this message, since over-engineering is often much worse than under-engineering.
+- On the other hand, when you discover that you truly do need an architectural boundary where none exists, the costs and risks can be very high to add such a boundary.
+- O Software Architect, you must see the future. You must guess—intelligently.
+- You must weigh the costs and determine where the architectural boundaries lie, and which should be fully implemented, and which should be partially implemented, and which should be ignored.
+- **But this is not a one-time decision. You don’t simply decide at the start of a project which boundaries to implement and which to ignore. Rather, you watch.**
+- You pay attention as the system evolves. You note where boundaries may be required, and then carefully watch for the first inkling of friction because those boundaries don’t exist.
+- At that point, you weigh the costs of implementing those boundaries versus the cost of ignoring them—and you review that decision frequently. Your goal is to implement the boundaries right at the inflection point where the cost of implementing becomes less than the cost of ignoring.
+
+# <a name="the-main-component">26. The Main Component</a>
+
+- In every system, there is at least one component that creates, coordinates, and oversees the others. I call this component `Main`.
+
+## The Ultimate Detail
+
