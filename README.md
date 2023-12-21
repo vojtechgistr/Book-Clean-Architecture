@@ -729,3 +729,26 @@ data, and the references to the appropriate Entities with which it interacts.
 - In many situations, a good architect might judge that the expense of such a boundary is too high—but might still want to hold a place for such a boundary in case it is needed later.
 - This kind of anticipatory design is often frowned upon by many in the Agile community as a violation of YAGNI: “You Aren’t Going to Need It.” Architects, however, sometimes look at the problem and think, “Yeah, but I might.” In that case, they may implement a partial boundary.
 - The full-fledged architectural boundary uses reciprocal boundary interfaces to maintain isolation in both directions.
+
+## Skip The Last Step
+- One way to construct a partial boundary is to do all the work necessary to create independently compilable and deployable components, and then simply keep them together in the same component.
+- The reciprocal interfaces are there, the input/output data structures are there, and everything is all set up—but we compile and deploy all of them as a single component.
+
+## One-Dimensional boundaries
+
+![image](https://github.com/vojtechgistr/Book-Clean-Architecture/assets/56306485/0695bd83-7ae0-460e-94d1-f6054e1d804c)
+
+- A simpler structure that serves to hold the place for later extension to a fullfledged boundary is shown in Figure 24.1.
+-  The necessary dependency inversion is in place in an attempt to isolate the `Client` from the `ServiceImpl`.
+-  It should also be clear that the separation can degrade pretty rapidly, as shown by the nasty dotted arrow in the diagram.
+
+## Facades
+
+- An even simpler boundary is the Facade pattern, dependency inversion is sacrificed.
+- The boundary is simply defined by the Facade class, which lists all the services as methods, and deploys the service calls to classes that the client is not supposed to access.
+
+![image](https://github.com/vojtechgistr/Book-Clean-Architecture/assets/56306485/3d32e1a3-84b6-4205-8025-ec51d2a4a8e0)
+
+- Note, however, that the Client has a transitive dependency on all those service classes.
+- In static languages, a change to the source code in one of the `Service` classes will force the `Client` to recompile.
+- Also, you can imagine how easy backchannels are to create with this structure.
