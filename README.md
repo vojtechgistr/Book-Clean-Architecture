@@ -35,6 +35,7 @@ IV. [Component Principles](#component-principles)
 24. [24. Partial Boundaries](#partial-boundaries)
 25. [25. Layers and Boundaries](#layers-and-boundaries)
 26. [26. The Main Component](#the-main-component)
+27. [27. Services: Great and Small](#services-great-and-small)
 
 ---
 
@@ -775,4 +776,12 @@ data, and the references to the appropriate Entities with which it interacts.
 - In every system, there is at least one component that creates, coordinates, and oversees the others. I call this component `Main`.
 
 ## The Ultimate Detail
+
+- The `Main` component is the ultimate detail—the lowest-level policy
+- Nothing, other than the operating system, depends on it.
+- Its job is to create all the Factories, Strategies, and other global facilities, and then hand control over to the high-level abstract portions of the system.
+- Think of Main as the dirtiest of all the dirty components.
+- Sets up the initial conditions and configurations, gathers all the outside resources, and then hands control over to the high-level policy of the application.
+
+# <a name="services-great-and-small">27. Services: Great and Small</a>
 
