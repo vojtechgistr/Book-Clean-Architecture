@@ -783,5 +783,3 @@ data, and the references to the appropriate Entities with which it interacts.
 - Think of Main as the dirtiest of all the dirty components.
 - Sets up the initial conditions and configurations, gathers all the outside resources, and then hands control over to the high-level policy of the application.
 
-# <a name="services-great-and-small">27. Services: Great and Small</a>
-
